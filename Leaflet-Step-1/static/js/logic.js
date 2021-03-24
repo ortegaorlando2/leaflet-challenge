@@ -1,3 +1,92 @@
+
+
+var blackIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-black.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+// Use this link to get the geojson data.
+let link = "static/data/eq.geojson";
+
+
+//Defining markers from github pointhi
+var blueIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-blue.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+
+
+let myMap = L.map("map", {
+  center: [17.97, -66.91],
+  zoom: 8
+});
+
+// Adding tile layer to the map
+L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+  tileSize: 512,
+  maxZoom: 18,
+  zoomOffset: -1,
+  id: "mapbox/streets-v11",
+  accessToken: API_KEY
+}).addTo(myMap);
+
+
+// Grab the data with d3
+d3.json(link).then(function(data){
+
+  console.log(data)
+
+  // Create a new marker cluster group
+  let markers = L.markerClusterGroup();
+
+  console.log(markers)
+
+  // Loop through data
+  data.features.forEach(record => {
+
+    console.log(record)
+
+    // Set the data location property to a variable
+    let location = record.geometry;
+    let magnitude = record.properties.mag**3;
+    let depth = record.geometry.coordinates[2]/100
+
+    console.log(location)    
+
+    // Check for location property
+    if (location) {
+ 
+      // Add a new marker to the cluster group and bind a pop-up
+      markers.addLayer(L.circleMarker([location.coordinates[1], location.coordinates[0]],
+        {
+        color:"#000",
+        opacity: depth,
+        radius: magnitude,
+        shadowAnchor: [22, 94]
+        })
+        .bindPopup(record.properties.place + "<br>Magnitude " + record.properties.mag));
+      }
+
+  });
+
+
+
+
+  // Add our marker cluster layer to the map
+  myMap.addLayer(markers);
+
+});
+
 // Creating map object
 // let myMap = L.map("map", {
 //   center: [40.7128, -74.0059],
@@ -14,19 +103,7 @@
 //   accessToken: API_Key
 // }).addTo(myMap);
 
-// Use this link to get the geojson data.
-let link = "static/data/eq.geojson";
 
-
-//Defining markers from github pointhi
-var blueIcon = new L.Icon({
-	iconUrl: 'img/marker-icon-2x-blue.png',
-	shadowUrl: 'img/marker-shadow.png',
-	iconSize: [25, 41],
-	iconAnchor: [12, 41],
-	popupAnchor: [1, -34],
-	shadowSize: [41, 41]
-});
 
 // // var goldIcon = new L.Icon({
 // // 	iconUrl: 'img/marker-icon-2x-gold.png',
@@ -91,29 +168,7 @@ var blueIcon = new L.Icon({
 // // 	shadowSize: [41, 41]
 // // });
 
-// // var blackIcon = new L.Icon({
-// // 	iconUrl: 'img/marker-icon-2x-black.png',
-// // 	shadowUrl: 'img/marker-shadow.png',
-// // 	iconSize: [25, 41],
-// // 	iconAnchor: [12, 41],
-// // 	popupAnchor: [1, -34],
-// // 	shadowSize: [41, 41]
-// // });
 
-let myMap = L.map("map", {
-  center: [40.7, -73.95],
-  zoom: 11
-});
-
-// Adding tile layer to the map
-L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-  tileSize: 512,
-  maxZoom: 1,
-  zoomOffset: -1,
-  id: "mapbox/streets-v11",
-  accessToken: API_KEY
-}).addTo(myMap);
 
 // function sizeMarker(){
 //   switch(mag){
@@ -140,51 +195,6 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 //               default: return "black";
 //   }
 // }
-
-let lat = 0
-let long = -117
-let depth = 33
-
-// Grab the data with d3
-d3.json(link).then(function(data) {
-
-  console.log(data)
-
-  // Create a new marker cluster group
-  let markers = L.markerClusterGroup();
-
-  console.log(markers)
-
-  // Loop through data
-  data.features.forEach(record => {
-
-    //console.log(record)
-
-    // Set the data location property to a variable
-    let location = record.geometry;
-
-    console.log(location)    
-
-    // Check for location property
-    if (location) {
-
-      // Add a new marker to the cluster group and bind a pop-up
-      markers.addLayer(L.circleMarker([location.coordinates[1], location.coordinates[0]],
-        {radius:5,
-        fillColor:"#ff6666",
-        color:"#000"
-        })
-        .bindPopup(record.descriptor));
-    }
-
-  });
-
-  // Add our marker cluster layer to the map
-  myMap.addLayer(markers);
-
-});
-
-
 
 // d3.json(link).then(data => {
 //   createFeatures(lat,long);
