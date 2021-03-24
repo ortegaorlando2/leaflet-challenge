@@ -16,10 +16,38 @@
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
     
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script>
+
 
     <!-- Our CSS -->
     <link rel="stylesheet" type="text/css" href="static/css/style.css">
     <link rel="shortcut icon" href="#">
+
+    <style>
+        .info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+        }
+        .legend {
+        background-color: “black”;
+        line-height: 25px;
+        color: #555;
+        width: auto;
+        }
+        .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+        }
+        </style>
+    
   </head>
   
   
@@ -27,25 +55,20 @@
 
     <!-- map div -->
     <div id="map"></div>
-    <div id="legend">
-      <p><b>USGS Magnitude 2.5+ Earthquakes, March 22nd, 2020</b></p><hr>
-      <p>Legend</p>
-      <p><ul>
-      <li>Proximal earthquakes show clustered (zoom in for details)</li>
-      <li>Marker size represents magnitude</li>
-      <li>Color represents depth</li>
-      <li>Greater depths indicated are darker</li>
-      </ul></p>
-      Each marker has a <b>popup</b>.  
-      Click on a maker to see place and magnitude<hr>
-      <img src="static/images/leaflet.png" width=50px length=10px>
 
-    </div>
+
+    <script>
+        var map = L.map('map').setView([45.528, -122.680], 13);
+        L.esri.basemapLayer("Topographic").addTo(map);
+    </script>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
     integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
     crossorigin=""></script>
+
+
+
     <!-- d3 JS -->
     <script src="https://d3js.org/d3.v6.min.js"></script>
 

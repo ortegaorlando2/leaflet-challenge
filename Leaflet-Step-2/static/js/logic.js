@@ -30,8 +30,10 @@ let myMap = L.map("map", {
   zoom: 4
 });
 
+let plateboundaries = L.layerGroup(cityMarkers);
+
 // Adding tile layer to the map
-L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+let plainmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
   attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
   tileSize: 512,
   maxZoom: 18,
@@ -39,6 +41,8 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   id: "mapbox/streets-v11",
   accessToken: API_KEY
 }).addTo(myMap);
+
+let plates = L.titleLayer()
 
 function getColor(d) {
   return d >= 100 ? 'brown' : 
@@ -86,37 +90,40 @@ d3.json(link).then(function(data){
         .bindPopup(record.properties.place + "<br>Magnitude " + record.properties.mag));
       }
 
-
-            
-
-    });
-
-    let legend = L.control({position: "bottomright"});
-    legend.onAdd = function() {
-      let div = L.DomUtil.create("div", "legend");
-      div.innerHTML= 
-          '<p><b>USGS Magnitude 2.5+ Earthquakes, March 22nd, 2020</b></p><hr>' +
-          '<p>Explanation</p>' +
-          '<p><ul>' +
-          '<li>Proximal earthquakes show clustered (zoom in for details)</li>' +
-          '<li>Marker size represents magnitude</li>' +
-          '<li>Color represents depth</li>' +
-          '<li>Greater depths indicated are darker</li>' +
-          '</ul></p>' +
-          'Each marker has a <b>popup</b>. ' + 
-          'Click on a maker to see place and magnitude<hr>' +
-            '<img src="static/images/leaflet.png" width=20px length=5px>';
-      return div;
-  };
-
-  legend.addTo(myMap)
+  });
 
 
   // Add our marker cluster layer to the map
   myMap.addLayer(markers);
 
+  // Set up the legend
+  let legend = L.control({ position: "bottomright" });
+  legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "info legend");
+    let limits = geojson.options.limits;
+    let colors = geojson.options.colors;
+    let labels = [];
 
-});   
+    // Add min & max
+    let legendInfo = "<h1>Magnitude</h1>" +
+      "<div class=\"labels\">" +
+        "<div class=\"min\">" + limits[0] + "</div>" +
+        "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
+      "</div>";
+
+    div.innerHTML = legendInfo;
+
+    limits.forEach(function(limit, index) {
+      labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
+    });
+
+    div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+    return div;
+  };
+
+  // Adding legend to the map
+  legend.addTo(myMap);
 
 
+});
 
