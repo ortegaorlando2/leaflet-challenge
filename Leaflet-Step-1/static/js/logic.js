@@ -27,7 +27,7 @@ var blueIcon = new L.Icon({
 
 let myMap = L.map("map", {
   center: [17.97, -66.91],
-  zoom: 8
+  zoom: 4
 });
 
 // Adding tile layer to the map
@@ -66,7 +66,7 @@ d3.json(link).then(function(data){
 
     // Set the data location property to a variable
     let location = record.geometry;
-    let magnitude = record.properties.mag**4;
+    let magnitude = record.properties.mag**2;
     let depth = record.geometry.coordinates[2]/100
 
     console.log(location)    
