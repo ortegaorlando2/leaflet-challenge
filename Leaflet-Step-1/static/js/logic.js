@@ -40,6 +40,14 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   accessToken: API_KEY
 }).addTo(myMap);
 
+function getColor(d) {
+  return d >= 100 ? 'brown' : 
+    d >= 50 ? 'red' : 
+    d >= 25 ? 'orange' :
+    d >= 10 ? 'green' : 
+    'grey';
+}
+
 
 // Grab the data with d3
 d3.json(link).then(function(data){
@@ -58,7 +66,7 @@ d3.json(link).then(function(data){
 
     // Set the data location property to a variable
     let location = record.geometry;
-    let magnitude = record.properties.mag**3;
+    let magnitude = record.properties.mag**4;
     let depth = record.geometry.coordinates[2]/100
 
     console.log(location)    
@@ -69,7 +77,8 @@ d3.json(link).then(function(data){
       // Add a new marker to the cluster group and bind a pop-up
       markers.addLayer(L.circleMarker([location.coordinates[1], location.coordinates[0]],
         {
-        color:"#000",
+          color: getColor(record.geometry.coordinates[2]), 
+          fillColor: getColor(record.geometry.coordinates[2]),
         opacity: depth,
         radius: magnitude,
         shadowAnchor: [22, 94]
